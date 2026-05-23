@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeNexus – Build Any Website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #050a12;
+      --surface: #0d1624;
+      --card: #111d2e;
+      --border: #1e3050;
+      --accent: #00d4ff;
+      --accent2: #7b5cfa;
+      --accent3: #ff6b35;
+      --text: #e8f1ff;
+      --muted: #6b8aaa;
+      --grad: linear-gradient(135deg, #00d4ff 0%, #7b5cfa 100%);
+      --grad2: linear-gradient(135deg, #7b5cfa 0%, #ff6b35 100%);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 5%;
+      background: rgba(5, 10, 18, 0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-svg { width: 42px; height: 42px; flex-shrink: 0; }
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    /* ── CHECKBOX BUTTON SYSTEM ── */
+    /* Hide real checkboxes */
+    .cb-trigger { display: none; }
+
+    /* Every CTA is a label that triggers the modal checkbox */
+    .cta-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-cta {
+      background: var(--grad);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      box-shadow: 0 0 20px rgba(0,212,255,0.15);
+    }
+    .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 0 30px rgba(0,212,255,0.2);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,212,255,0.35); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .btn-outline:hover { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+
+    .btn-card {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      display: block;
+      text-align: center;
+    }
+    .btn-card.grad { background: var(--grad); color: #fff; box-shadow: 0 0 24px rgba(0,212,255,0.2); }
+    .btn-card.grad:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-card.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-card.outline:hover { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+
+    /* ── MODAL OVERLAY via checkbox ── */
+    #modal-toggle { display: none; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(2, 6, 14, 0.75);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.25s ease;
+    }
+
+    #modal-toggle:checked ~ .modal-overlay { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 40px;
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+      overflow: hidden;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--grad);
+    }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.25);
+      padding: 4px 14px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .modal-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
+
+    .modal-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .modal-box p.modal-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 26px;
+      font-weight: 300;
+    }
+
+    /* Interest checkboxes inside modal */
+    .interest-section {
+      margin-bottom: 22px;
+    }
+    .interest-label-head {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .interest-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip-check { display: none; }
+    .chip-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      user-select: none;
+    }
+    .chip-check:checked + .chip-label {
+      border-color: var(--accent);
+      background: rgba(0,212,255,0.1);
+      color: var(--accent);
+    }
+    .chip-label::before {
+      content: '';
+      width: 14px; height: 14px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+      background: transparent;
+    }
+    .chip-check:checked + .chip-label::before {
+      background: var(--accent);
+      border-color: var(--accent);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.5 7l3 3 6-6' stroke='%23050a12' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: 10px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+    .form-group input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 15px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+    }
+    .form-group input::placeholder { color: #3a5070; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--grad);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 0 28px rgba(0,212,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(0,212,255,0.35); }
+    .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+    .success-icon { font-size: 3rem; margin-bottom: 14px; }
+    .success-msg h3 { font-family: 'Syne', sans-serif; font-size: 1.35rem; margin-bottom: 8px; }
+    .success-msg p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+
+    .close-success {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 28px;
+      border-radius: 8px;
+      background: var(--grad);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .close-success:hover { opacity: 0.85; }
+
+    .error-msg { display: none; color: #ff6b6b; font-size: 0.84rem; margin-top: 8px; text-align: center; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 5% 80px;
+      overflow: hidden;
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .orb1 { width: 500px; height: 500px; background: rgba(0,212,255,0.12); top: -10%; left: -15%; }
+    .orb2 { width: 400px; height: 400px; background: rgba(123,92,250,0.15); bottom: 0%; right: -10%; }
+    .orb3 { width: 300px; height: 300px; background: rgba(255,107,53,0.08); top: 40%; left: 40%; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.3);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.7s 0.2s ease both;
+      font-weight: 300;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    /* ── BROWSER MOCKUP ── */
+    .hero-mockup {
+      position: relative;
+      margin-top: 60px;
+      width: 100%;
+      max-width: 860px;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+    .mockup-browser {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .browser-bar {
+      background: var(--surface);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dots span { width: 11px; height: 11px; border-radius: 50%; }
+    .browser-dots span:nth-child(1) { background: #ff5f57; }
+    .browser-dots span:nth-child(2) { background: #febc2e; }
+    .browser-dots span:nth-child(3) { background: #28c840; }
+    .browser-url {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .browser-content {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      min-height: 220px;
+    }
+    .mini-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .mini-card-icon { width: 32px; height: 32px; border-radius: 8px; }
+    .mini-bar { height: 8px; border-radius: 4px; background: var(--border); }
+    .mini-bar.w80{width:80%} .mini-bar.w60{width:60%} .mini-bar.w90{width:90%}
+    .mini-bar.accent { background: var(--grad); width: 40%; height: 6px; }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 300;
+      max-width: 520px;
+      margin: 0 auto 50px;
+    }
+
+    /* ── SERVICES ── */
+    #services { padding: 100px 5%; text-align: center; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 26px;
+      text-align: left;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--grad);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .service-card:hover { transform: translateY(-6px); border-color: rgba(0,212,255,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+    .service-icon.blue{background:rgba(0,212,255,0.12)} .service-icon.purple{background:rgba(123,92,250,0.12)}
+    .service-icon.orange{background:rgba(255,107,53,0.12)} .service-icon.green{background:rgba(0,200,120,0.12)}
+    .service-icon.pink{background:rgba(255,80,160,0.12)} .service-icon.yellow{background:rgba(255,210,0,0.12)}
+    .service-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; }
+    .service-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.7; }
+
+    /* service card "Get Started" link at bottom */
+    .card-get-started {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+      cursor: pointer;
+      transition: gap 0.2s;
+      text-decoration: none;
+    }
+    .card-get-started:hover { gap: 8px; }
+
+    /* ── PRICING ── */
+    #pricing {
+      padding: 100px 5%;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(123,92,250,0.08) 0%, transparent 70%);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 30px;
+      text-align: left;
+      position: relative;
+      transition: transform 0.25s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.featured {
+      border-color: var(--accent2);
+      background: linear-gradient(145deg, #131d35 0%, #0d1624 100%);
+      box-shadow: 0 0 0 1px rgba(123,92,250,0.3), 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .badge-popular {
+      position: absolute;
+      top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--grad2);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .pricing-plan { font-size: 0.8rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .pricing-price { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+    .pricing-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 8px; }
+    .pricing-price sub { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .pricing-free-badge { display: inline-block; background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; }
+    .pricing-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; line-height: 1.6; }
+    .pricing-features { list-style: none; margin-bottom: 30px; display: flex; flex-direction: column; gap: 11px; }
+    .pricing-features li { font-size: 0.92rem; display: flex; align-items: center; gap: 10px; color: var(--text); }
+    .pricing-features li::before {
+      content: '✓';
+      display: flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(0,212,255,0.15);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── HOW IT WORKS ── */
+    #how {
+      padding: 100px 5%;
+      text-align: center;
+      background: radial-gradient(ellipse at 80% 50%, rgba(0,212,255,0.05) 0%, transparent 60%);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .step {
+      padding: 30px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      text-align: center;
+      transition: transform 0.25s;
+    }
+    .step:hover { transform: translateY(-4px); }
+    .step-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .step h3 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 10px; font-size: 1.05rem; }
+    .step p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* ── SHOWCASE ── */
+    #showcase { padding: 100px 5%; text-align: center; }
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .showcase-card {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+      transition: transform 0.25s, box-shadow 0.25s;
+      text-align: left;
+      cursor: pointer;
+    }
+    .showcase-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .showcase-img {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+    }
+    .showcase-img.c1{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364)}
+    .showcase-img.c2{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)}
+    .showcase-img.c3{background:linear-gradient(135deg,#2d1b69,#11998e,#38ef7d)}
+    .showcase-img.c4{background:linear-gradient(135deg,#fc4a1a,#f7b733)}
+    .showcase-img.c5{background:linear-gradient(135deg,#000428,#004e92)}
+    .showcase-img.c6{background:linear-gradient(135deg,#232526,#414345)}
+    .showcase-info { padding: 18px 20px; }
+    .showcase-info h4 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 6px; }
+    .showcase-info p { color: var(--muted); font-size: 0.88rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .footer-copy { color: var(--muted); font-size: 0.85rem; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; cursor: pointer; }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      nav { padding: 14px 4%; }
+      .logo-text { font-size: 1.05rem; }
+      .nav-cta { padding: 8px 16px; font-size: 0.82rem; }
+      .browser-content { grid-template-columns: 1fr; min-height: auto; padding: 16px; }
+      .mini-card:nth-child(n+2) { display: none; }
+      .modal-box { padding: 32px 20px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 300px; text-align: center; }
+      footer { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <input type="checkbox" id="modal-toggle" class="cb-trigger" />
+
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <label for="modal-toggle" class="modal-close" title="Close">✕</label>
+
+      <div id="modal-form-area">
+        <div class="modal-badge"><span class="dot"></span> First Month FREE</div>
+        <h2>Let's Build Your Website</h2>
+        <p class="modal-sub">Tell us what you need — our team will reach out within 24 hours.</p>
+
+        <div class="interest-section">
+          <div class="interest-label-head">What are you looking for? (select all that apply)</div>
+          <div class="interest-chips">
+            <input type="checkbox" class="chip-check" id="chip1" />
+            <label class="chip-label" for="chip1">🛍️ E-Commerce</label>
+
+            <input type="checkbox" class="chip-check" id="chip2" />
+            <label class="chip-label" for="chip2">🚀 Landing Page</label>
+
+            <input type="checkbox" class="chip-check" id="chip3" />
+            <label class="chip-label" for="chip3">🎨 Portfolio</label>
+
+            <input type="checkbox" class="chip-check" id="chip4" />
+            <label class="chip-label" for="chip4">📊 Dashboard</label>
+
+            <input type="checkbox" class="chip-check" id="chip5" />
+            <label class="chip-label" for="chip5">🏢 Business Site</label>
+
+            <input type="checkbox" class="chip-check" id="chip6" />
+            <label class="chip-label" for="chip6">📝 Blog</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inp-name">Full Name *</label>
+          <input type="text" id="inp-name" placeholder="Arjun Sharma" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="inp-mobile">Mobile Number *</label>
+          <input type="tel" id="inp-mobile" placeholder="+91 98765 43210" autocomplete="tel" />
+        </div>
+        <div class="form-group">
+          <label for="inp-email">Email Address *</label>
+          <input type="email" id="inp-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="submitForm()">
+          <span id="btn-label">Send My Details 🚀</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <div class="error-msg" id="error-msg">Something went wrong. Please try again.</div>
+      </div>
+
+      <div class="success-msg" id="success-msg">
+        <div class="success-icon">🎉</div>
+        <h3>You're on the list!</h3>
+        <p>Thanks! Our team will reach out within 24 hours to kick off your first month — completely free.</p>
+        <label for="modal-toggle">
+          <button class="close-success" onclick="resetModal()">Close</button>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <a href="#" class="logo">
+      <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00d4ff"/>
+            <stop offset="100%" stop-color="#7b5cfa"/>
+          </linearGradient>
+          <linearGradient id="lg2" x1="42" y1="0" x2="0" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7b5cfa"/>
+            <stop offset="100%" stop-color="#ff6b35"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 2L38 11.5V30.5L21 40L4 30.5V11.5L21 2Z" fill="url(#lg1)" opacity="0.15" stroke="url(#lg1)" stroke-width="1.5"/>
+        <path d="M14 15L9 21L14 27" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 15L33 21L28 27" stroke="url(#lg2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="21" cy="21" r="3" fill="url(#lg1)"/>
+        <line x1="21" y1="12" x2="21" y2="18" stroke="url(#lg1)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="21" y1="24" x2="21" y2="30" stroke="url(#lg2)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">CodeNexus</span>
+    </a>
+    <label for="modal-toggle" class="cta-label nav-cta">Get Started Free</label>
+  </nav>
+
+  <section class="hero">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Now accepting new clients — First month FREE
+    </div>
+
+    <h1>We Build <span>Any Website</span><br>You Can Imagine</h1>
+    <p class="hero-sub">Landing pages, e-commerce stores, portfolios, dashboards — we craft stunning, blazing-fast websites tailored to your business.</p>
+
+    <div class="hero-btns">
+      <label for="modal-toggle" class="cta-label btn-primary">🚀 Start Free This Month</label>
+      <label for="modal-toggle" class="cta-label btn-outline">See What We Build</label>
+    </div>
+
+    <div class="hero-mockup">
+      <div class="mockup-browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span></span><span></span><span></span></div>
+          <div class="browser-url">your-brand.com · Built by CodeNexus</div>
+        </div>
+        <div class="browser-content">
+          <div class="mini-card">
+            <svg class="mini-card-icon" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="url(#lg1)" opacity="0.3"/>
+              <path d="M8 20L14 14L18 18L22 13L26 17" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="mini-bar w80"></div>
+            <div class="mini-bar w60"></div>
+            <div class="mini-bar accent"></div>
+          </div>
+          <div class="mini-card">
+            <svg class="mini-card-icon" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="url(#lg2)" opacity="0.2"/>
+              <rect x="8" y="8" width="7" height="7" rx="2" fill="#7b5cfa" opacity="0.7"/>
+              <rect x="17" y="8" width="7" height="7" rx="2" fill="#7b5cfa" opacity="0.4"/>
+              <rect x="8" y="17" width="7" height="7" rx="2" fill="#7b5cfa" opacity="0.4"/>
+              <rect x="17" y="17" width="7" height="7" rx="2" fill="#7b5cfa" opacity="0.7"/>
+            </svg>
+            <div class="mini-bar w90"></div>
+            <div class="mini-bar w60"></div>
+            <div class="mini-bar accent"></div>
+          </div>
+          <div class="mini-card">
+            <svg class="mini-card-icon" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="#ff6b35" opacity="0.15"/>
+              <circle cx="16" cy="13" r="4" stroke="#ff6b35" stroke-width="1.8"/>
+              <path d="M8 26c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#ff6b35" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <div class="mini-bar w80"></div>
+            <div class="mini-bar w90"></div>
+            <div class="mini-bar accent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="reveal">
+      <div class="section-label">What We Build</div>
+      <h2>Every Kind of Website,<br>Built to Perfection</h2>
+      <p class="section-sub">From sleek landing pages to full-scale web apps — we do it all with clean code and pixel-perfect design.</p>
+    </div>
+    <div class="services-grid reveal">
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon blue">🏪</div>
+        <h3>E-Commerce Stores</h3>
+        <p>Full-featured online shops with payment gateways, cart, product management, and mobile-first checkout flows.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon purple">🎨</div>
+        <h3>Portfolio & Creative Sites</h3>
+        <p>Stunning personal or agency portfolios that showcase your work with smooth animations and bold typography.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon orange">🚀</div>
+        <h3>Landing Pages</h3>
+        <p>High-converting landing pages engineered to turn visitors into leads or customers — fast.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon green">📊</div>
+        <h3>Dashboards & Web Apps</h3>
+        <p>Data-rich dashboards and internal tools with real-time updates, charts, and authentication.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon pink">🏢</div>
+        <h3>Business & Corporate Sites</h3>
+        <p>Professional websites for your company with service pages, team sections, contact forms, and SEO.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      <label for="modal-toggle" class="service-card" style="display:block;">
+        <div class="service-icon yellow">📝</div>
+        <h3>Blogs & Content Platforms</h3>
+        <p>CMS-powered blogs and content hubs with categories, tags, newsletters, and fast loading.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="reveal">
+      <div class="section-label">The Process</div>
+      <h2>Simple. Transparent. Fast.</h2>
+      <p class="section-sub">From your idea to a live website — here's exactly how it works.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Tell Us Your Vision</h3>
+        <p>Fill out our quick form. We'll reach out within 24 hours to discuss your project, goals, and timeline.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Design & Build</h3>
+        <p>Our team crafts a custom design, shares previews, and builds your site with clean, scalable code.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Review & Refine</h3>
+        <p>You review, we revise. Unlimited changes until the site is exactly what you envisioned.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Launch 🚀</h3>
+        <p>We deploy your site, handle hosting setup, and hand you the keys — ready for real traffic.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="showcase">
+    <div class="reveal">
+      <div class="section-label">Portfolio</div>
+      <h2>Websites We've Built</h2>
+      <p class="section-sub">A small glimpse of our work across industries and styles.</p>
+    </div>
+    <div class="showcase-grid reveal">
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c1">🛍️</div>
+        <div class="showcase-info">
+          <h4>StyleVault — Fashion Store</h4>
+          <p>E-commerce · Shopify-powered · Mobile-first</p>
+        </div>
+      </label>
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c2">📱</div>
+        <div class="showcase-info">
+          <h4>AppForge — SaaS Landing</h4>
+          <p>Landing Page · High-converting · A/B tested</p>
+        </div>
+      </label>
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c3">🌿</div>
+        <div class="showcase-info">
+          <h4>GreenBowl — Restaurant Site</h4>
+          <p>Business Site · Menu · Online Reservations</p>
+        </div>
+      </label>
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c4">📸</div>
+        <div class="showcase-info">
+          <h4>Lenz — Photography Portfolio</h4>
+          <p>Portfolio · Gallery · Booking System</p>
+        </div>
+      </label>
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c5">🏦</div>
+        <div class="showcase-info">
+          <h4>FinCore — Fintech Dashboard</h4>
+          <p>Web App · Charts · Real-time data</p>
+        </div>
+      </label>
+      <label for="modal-toggle" class="showcase-card" style="display:block;">
+        <div class="showcase-img c6">✍️</div>
+        <div class="showcase-info">
+          <h4>Inkwell — Blog Platform</h4>
+          <p>Content Site · CMS · Newsletter Integration</p>
+        </div>
+      </label>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="reveal">
+      <div class="section-label">Pricing</div>
+      <h2>Simple, Honest Pricing</h2>
+      <p class="section-sub">No hidden fees. First month completely free, then a flat monthly rate.</p>
+    </div>
+    <div class="pricing-grid reveal">
+      <div class="pricing-card">
+        <div class="pricing-plan">Month 1</div>
+        <div class="pricing-free-badge">🎉 Absolutely FREE</div>
+        <div class="pricing-price"><sup>₹</sup>0<sub>/mo</sub></div>
+        <p class="pricing-desc">Get your website designed, built, and launched with zero upfront cost. No credit card required to start.</p>
+        <ul class="pricing-features">
+          <li>Custom website design</li>
+          <li>Up to 5 pages</li>
+          <li>Mobile-responsive layout</li>
+          <li>Basic SEO setup</li>
+          <li>Contact form integration</li>
+          <li>Free hosting (1st month)</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card outline" style="display:flex;">Claim Free Month</label>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="badge-popular">⚡ Most Popular</div>
+        <div class="pricing-plan">From Month 2</div>
+        <div class="pricing-price"><sup>₹</sup>2,999<sub>/mo</sub></div>
+        <p class="pricing-desc">Everything from Month 1, plus ongoing support, updates, and premium features as your business grows.</p>
+        <ul class="pricing-features">
+          <li>Everything in Free Month</li>
+          <li>Unlimited page updates</li>
+          <li>Priority 24/7 support</li>
+          <li>Performance optimization</li>
+          <li>Monthly analytics report</li>
+          <li>Advanced SEO &amp; blog</li>
+          <li>Domain + Hosting included</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card grad" style="display:flex;">Get Started Free →</label>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">
+      <svg style="width:28px;height:28px;" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg3" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00d4ff"/>
+            <stop offset="100%" stop-color="#7b5cfa"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 2L38 11.5V30.5L21 40L4 30.5V11.5L21 2Z" fill="url(#lg3)" opacity="0.15" stroke="url(#lg3)" stroke-width="1.5"/>
+        <path d="M14 15L9 21L14 27" stroke="url(#lg3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 15L33 21L28 27" stroke="url(#lg3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="21" cy="21" r="3" fill="url(#lg3)"/>
+      </svg>
+      <span class="logo-text" style="font-size:1rem;">CodeNexus</span>
+    </div>
+    <p class="footer-copy">© 2025 CodeNexus. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <label for="modal-toggle" style="color:var(--muted);font-size:0.85rem;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Contact</label>
+    </div>
+  </footer>
+
+  
+<script>
+/* ── SCROLL REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+reveals.forEach(r => observer.observe(r));
+
+/* ── CLOSE MODAL ── */
+document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) {
+    document.getElementById('modal-toggle').checked = false;
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('modal-toggle').checked = false;
+  }
+});
+
+/* ── GOOGLE FORM CONFIG ── */
+const FORM_ACTION =
+"https://docs.google.com/forms/d/e/1FAIpQLSdrPlobngXvUDZ2l-JR_vltb_zmdYHQHhVtabDcFHZQUWT6Gg/formResponse";
+
+/* IMPORTANT:
+   Replace these IDs with your actual form entry IDs if needed.
+*/
+const FIELDS = {
+  name: "entry.839337160",
+  mobile: "entry.1951564835",
+  email: "entry.1648423629"
+};
+
+function submitForm() {
+
+  const name = document.getElementById("inp-name").value.trim();
+  const mobile = document.getElementById("inp-mobile").value.trim();
+  const email = document.getElementById("inp-email").value.trim();
+
+  if (!name) {
+    alert("Please enter your name");
+    return;
+  }
+
+  if (!mobile) {
+    alert("Please enter mobile number");
+    return;
+  }
+
+  if (!email) {
+    alert("Please enter email");
+    return;
+  }
+
+  const btn = document.getElementById("submit-btn");
+  const label = document.getElementById("btn-label");
+  const spinner = document.getElementById("spinner");
+
+  btn.disabled = true;
+  label.textContent = "Sending...";
+  spinner.style.display = "block";
+
+  /* Create hidden form */
+  const form = document.createElement("form");
+
+  form.method = "POST";
+  form.action = FORM_ACTION;
+  form.target = "hidden_iframe";
+  form.style.display = "none";
+
+  const fields = {
+    [FIELDS.name]: name,
+    [FIELDS.mobile]: mobile,
+    [FIELDS.email]: email
+  };
+
+  for (const key in fields) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+
+  form.submit();
+
+  setTimeout(() => {
+
+    document.getElementById("modal-form-area").style.display = "none";
+    document.getElementById("success-msg").style.display = "block";
+
+    document.getElementById("inp-name").value = "";
+    document.getElementById("inp-mobile").value = "";
+    document.getElementById("inp-email").value = "";
+
+    btn.disabled = false;
+    label.textContent = "Send My Details 🚀";
+    spinner.style.display = "none";
+
+    document.body.removeChild(form);
+
+  }, 1500);
+}
+
+function resetModal() {
+
+  document.getElementById("modal-toggle").checked = false;
+
+  setTimeout(() => {
+
+    document.getElementById("modal-form-area").style.display = "block";
+    document.getElementById("success-msg").style.display = "none";
+
+  }, 300);
+}
+</script>
+
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+</body>
+</html>
