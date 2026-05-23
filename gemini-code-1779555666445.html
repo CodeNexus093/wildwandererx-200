@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeNexus – Build Any Website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #06b6d4;
+      --accent2: #6366f1;
+      --accent3: #f43f5e;
+      --text: #0f172a;
+      --muted: #475569;
+      --grad: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+      --insta-grad: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── TOP INSTAGRAM BANNER (PRIMARY CONTACT SOURCE) ── */
+    .top-contact-banner {
+      background: var(--insta-grad);
+      color: #ffffff;
+      text-align: center;
+      padding: 10px 5%;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 201;
+      box-shadow: 0 2px 10px rgba(220, 39, 67, 0.25);
+    }
+    .top-contact-banner a {
+      color: #ffffff;
+      text-decoration: underline;
+      margin-left: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+    }
+    .top-contact-banner a:hover { opacity: 0.9; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 40px; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 5%;
+      background: rgba(248, 250, 252, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-svg { width: 38px; height: 38px; flex-shrink: 0; }
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-insta-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-insta-link:hover { color: #dc2743; }
+    .nav-insta-link svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* ── BUTTONS & CTA SYSTEM ── */
+    .cta-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+    }
+
+    .nav-cta {
+      background: var(--grad);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.25);
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4); }
+
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(6, 182, 212, 0.4); }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .btn-outline:hover { border-color: var(--accent2); background: rgba(99, 102, 241, 0.02); transform: translateY(-1px); }
+
+    .btn-card {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .btn-card.grad { background: var(--grad); color: #fff; box-shadow: 0 4px 14px rgba(6, 182, 212, 0.15); }
+    .btn-card.grad:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3); }
+    .btn-card.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-card.outline:hover { border-color: var(--accent); background: rgba(6, 182, 212, 0.02); }
+
+    /* ── POPUP ACTION MODAL ── */
+    #modal-toggle { display: none; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(15, 23, 42, 0.3);
+      backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    #modal-toggle:checked ~ .modal-overlay { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 44px 36px;
+      width: 100%;
+      max-width: 450px;
+      position: relative;
+      animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: var(--insta-grad);
+    }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .modal-close {
+      position: absolute;
+      top: 18px; right: 18px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .modal-close:hover { background: #e2e8f0; color: var(--text); }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px solid rgba(244, 63, 94, 0.15);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--accent3);
+      margin-bottom: 18px;
+      font-weight: 700;
+    }
+
+    .modal-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .modal-box p.modal-sub {
+      color: var(--muted);
+      font-size: 0.98rem;
+      margin-bottom: 30px;
+    }
+
+    .insta-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--insta-grad);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(220, 39, 67, 0.3);
+    }
+    .insta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(220, 39, 67, 0.45); }
+    .insta-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 160px 5% 60px;
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
+    .orb1 { width: 500px; height: 500px; background: rgba(6, 182, 212, 0.06); top: 5%; left: -10%; }
+    .orb2 { width: 500px; height: 500px; background: rgba(99, 102, 241, 0.06); bottom: 5%; right: -10%; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+    h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--muted);
+      max-width: 600px;
+      margin-bottom: 40px;
+      font-weight: 500;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ── SECTIONS GENERAL ── */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 14px;
+      background: rgba(99, 102, 241, 0.06);
+      padding: 6px 14px;
+      border-radius: 8px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.85rem, 4vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto 50px;
+    }
+
+    /* ── SERVICES ── */
+    #services { padding: 90px 5%; text-align: center; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: left;
+      transition: all 0.25s ease;
+      position: relative;
+      cursor: pointer;
+    }
+    .service-card:hover { transform: translateY(-4px); border-color: rgba(99, 102, 241, 0.25); box-shadow: 0 16px 32px rgba(0,0,0,0.03); }
+    .service-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      background: #f1f5f9;
+    }
+    .service-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; margin-bottom: 10px; color: var(--text); }
+    .service-card p { color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+    .card-get-started {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── HOW IT WORKS ── */
+    #how { padding: 90px 5%; text-align: center; background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .step { padding: 32px 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; text-align: center; }
+    .step-num { font-family: 'Syne', sans-serif; font-size: 2.6rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 10px; }
+    .step h3 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 10px; font-size: 1.1rem; color: var(--text); }
+    .step p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── PRICING ── */
+    #pricing { padding: 90px 5%; text-align: center; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 28px; max-width: 840px; margin: 0 auto; }
+    .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 40px 32px; text-align: left; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+    .pricing-card.featured { border-color: var(--accent2); box-shadow: 0 16px 40px rgba(99, 102, 241, 0.05); }
+    .badge-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--grad2); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; }
+    .pricing-plan { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+    .pricing-price { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 8px; color: var(--text); }
+    .pricing-price sub { font-size: 0.9rem; font-weight: 500; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .pricing-free-badge { display: inline-block; background: rgba(6, 182, 212, 0.08); color: var(--accent); border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 8px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; margin-bottom: 14px; }
+    .pricing-desc { color: var(--muted); font-size: 0.92rem; margin-bottom: 24px; }
+    .pricing-features { list-style: none; margin-bottom: 30px; display: flex; flex-direction: column; gap: 12px; }
+    .pricing-features li { font-size: 0.92rem; display: flex; align-items: center; gap: 10px; color: var(--text); }
+    .pricing-features li::before { content: '✓'; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(6, 182, 212, 0.1); color: var(--accent); font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 44px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; background: #fff; }
+    .footer-copy { color: var(--muted); font-size: 0.88rem; }
+    .footer-copy a { color: var(--text); font-weight: 700; text-decoration: none; background: var(--insta-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .footer-links { display: flex; gap: 24px; align-items: center; }
+    .footer-links a, .footer-links label { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+    .footer-links a:hover, .footer-links label:hover { color: #dc2743; }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── COMPACT PHONE VIEW REFINEMENTS ── */
+    @media (max-width: 640px) {
+      .top-contact-banner { font-size: 0.8rem; padding: 8px 4%; line-height: 1.4; }
+      nav { top: 48px; padding: 12px 4%; }
+      .logo-text { font-size: 1.15rem; }
+      .nav-insta-link span { display: none; } /* Hide text on small phones, leave icon */
+      .nav-cta { padding: 8px 14px; font-size: 0.8rem; }
+      .hero { padding-top: 160px; padding-bottom: 40px; }
+      .hero-btns { flex-direction: column; width: 100%; max-width: 280px; }
+      .btn-primary, .btn-outline { width: 100%; text-align: center; padding: 14px 24px; }
+      .modal-box { padding: 36px 20px; }
+      #services, #how, #pricing { padding: 60px 4%; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <input type="checkbox" id="modal-toggle" />
+
+  <div class="top-contact-banner">
+    Connect instantly on Instagram for updates and details:
+    <a href="https://www.instagram.com/wildwandererx_200/" target="_blank">
+      <svg style="width:14px; height:14px; fill:currentColor; vertical-align:middle;" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      @wildwandererx_200
+    </a>
+  </div>
+
+  <nav>
+    <a href="#" class="logo">
+      <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#06b6d4"/>
+            <stop offset="100%" stop-color="#6366f1"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 2L38 11.5V30.5L21 40L4 30.5V11.5L21 2Z" fill="url(#lg1)" opacity="0.08" stroke="url(#lg1)" stroke-width="1.5"/>
+        <path d="M14 15L9 21L14 27" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 15L33 21L28 27" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="21" cy="21" r="3" fill="url(#lg1)"/>
+      </svg>
+      <span class="logo-text">CodeNexus</span>
+    </a>
+    
+    <div class="nav-links-right">
+      <a href="https://www.instagram.com/wildwandererx_200/" target="_blank" class="nav-insta-link">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        <span>Instagram</span>
+      </a>
+      <label for="modal-toggle" class="cta-label nav-cta">Get Started</label>
+    </div>
+  </nav>
+
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <label for="modal-toggle" class="modal-close">✕</label>
+      <div class="modal-badge">✨ Let's Connect</div>
+      <h2>Start Your Project</h2>
+      <p class="modal-sub">Ready to build your next custom interface? Send a direct message over to get started instantly.</p>
+
+      <a href="https://www.instagram.com/wildwandererx_200/" target="_blank" class="insta-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        <span>DM on Instagram 🚀</span>
+      </a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <div class="hero-badge">Now accepting new clients — First month FREE</div>
+
+    <h1>We Build <span>Any Website</span><br>You Can Imagine</h1>
+    <p class="hero-sub">Landing pages, stores, portfolios, and responsive interfaces—crafted cleanly with perfect precision for your brand.</p>
+
+    <div class="hero-btns">
+      <label for="modal-toggle" class="cta-label btn-primary">🚀 Start Free This Month</label>
+      <a href="#services" class="cta-label btn-outline">See Services</a>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="reveal">
+      <div class="section-label">What We Build</div>
+      <h2>Every Kind of Website,<br>Built to Perfection</h2>
+      <p class="section-sub">From modern landing pages to clean online stores—delivered with ultra-fast optimization.</p>
+    </div>
+    
+    <div class="services-grid reveal">
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🏪</div>
+        <h3>E-Commerce Stores</h3>
+        <p>Full online shops integrated with seamless mobile-first layouts and fast payment checkouts.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🎨</div>
+        <h3>Portfolio Sites</h3>
+        <p>Stunning spaces designed beautifully to present your unique creative work and expertise.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🚀</div>
+        <h3>Landing Pages</h3>
+        <p>High-conversion structures engineered cleanly to present products or launch ideas with impact.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="reveal">
+      <div class="section-label">The Process</div>
+      <h2>Simple. Transparent. Fast.</h2>
+      <p class="section-sub">From an informal idea to a beautifully deployed functional link.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Share the Idea</h3>
+        <p>Connect with us on Instagram to map out your core feature request requirements seamlessly.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Build & Iterate</h3>
+        <p>We configure customized concepts and layout blueprints dynamically for your review process.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Launch 🚀</h3>
+        <p>We deploy directly onto lightning-fast reliable storage nodes ready for custom traffic flows.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="reveal">
+      <div class="section-label">Pricing</div>
+      <h2>Simple, Honest Pricing</h2>
+      <p class="section-sub">No hidden retainers. First month completely zero cost, followed by flat affordable rates.</p>
+    </div>
+    
+    <div class="pricing-grid reveal">
+      <div class="pricing-card">
+        <div class="pricing-plan">Month 1</div>
+        <div class="pricing-free-badge">🎉 Absolutely FREE</div>
+        <div class="pricing-price">₹0<sub>/mo</sub></div>
+        <p class="pricing-desc">Get your complete website designed, refined, and deployed safely with zero initial upfront investment required.</p>
+        <ul class="pricing-features">
+          <li>Custom layout frameworks</li>
+          <li>Mobile responsive scaling</li>
+          <li>Clean code structural logic</li>
+          <li>Contact endpoint alignment</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card outline">Claim Free Setup</label>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="badge-popular">⚡ Standard</div>
+        <div class="pricing-plan">From Month 2</div>
+        <div class="pricing-price">₹2,999<sub>/mo</sub></div>
+        <p class="pricing-desc">Continuous hosting coordination, text content additions, and routine feature enhancements as operations scale forward.</p>
+        <ul class="pricing-features">
+          <li>Everything in Free Month</li>
+          <li>Priority iteration windows</li>
+          <li>Performance speed monitoring</li>
+          <li>Domain mapping configuration</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card grad">Get Started Today</label>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">
+      <span class="logo-text" style="font-size:1rem;">CodeNexus</span>
+    </div>
+    <p class="footer-copy">© 2026 CodeNexus. Designed by <a href="https://www.instagram.com/wildwandererx_200/" target="_blank">@wildwandererx_200</a>.</p>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://www.instagram.com/wildwandererx_200/" target="_blank" style="color: #dc2743; font-weight: 700;">Instagram Profile</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ── SCROLL REVEAL LOGIC ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.05 });
+
+    reveals.forEach(r => observer.observe(r));
+
+    /* ── DISMISS MODAL VIA ESC KEY OR BACKDROP CLICK ── */
+    document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        document.getElementById('modal-toggle').checked = false;
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.getElementById('modal-toggle').checked = false;
+      }
+    });
+  </script>
+</body>
+</html>
