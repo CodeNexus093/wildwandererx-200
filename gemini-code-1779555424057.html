@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeNexus – Build Any Website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f7f9fc;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #00b4d8;
+      --accent2: #6c5ce7;
+      --accent3: #ff7675;
+      --text: #1e293b;
+      --muted: #64748b;
+      --grad: linear-gradient(135deg, #00b4d8 0%, #6c5ce7 100%);
+      --grad2: linear-gradient(135deg, #6c5ce7 0%, #ff7675 100%);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 5%;
+      background: rgba(247, 249, 252, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-svg { width: 42px; height: 42px; flex-shrink: 0; }
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    /* ── BUTTONS & CTA SYSTEM ── */
+    .cta-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-cta {
+      background: var(--grad);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(0,180,216,0.2);
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,180,216,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,180,216,0.35); }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .btn-outline:hover { border-color: var(--accent); background: rgba(0,180,216,0.02); transform: translateY(-1px); }
+
+    .btn-card {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 500;
+      display: block;
+      text-align: center;
+    }
+    .btn-card.grad { background: var(--grad); color: #fff; box-shadow: 0 4px 15px rgba(0,180,216,0.15); }
+    .btn-card.grad:hover { opacity: 0.95; transform: translateY(-2px); }
+    .btn-card.outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-card.outline:hover { border-color: var(--accent); background: rgba(0,180,216,0.02); }
+
+    /* ── INSTAGRAM REDIRECT MODAL ── */
+    #modal-toggle { display: none; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.25s ease;
+    }
+
+    #modal-toggle:checked ~ .modal-overlay { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--grad);
+    }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: #e2e8f0; color: var(--text); }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(108, 92, 231, 0.08);
+      border: 1px solid rgba(108, 92, 231, 0.15);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .modal-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .modal-box p.modal-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 26px;
+    }
+
+    .insta-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3);
+    }
+    .insta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220, 39, 67, 0.45); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 5% 60px;
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+    .orb1 { width: 400px; height: 400px; background: rgba(0,180,216,0.08); top: 5%; left: -10%; }
+    .orb2 { width: 400px; height: 400px; background: rgba(108,92,237,0.08); bottom: 10%; right: -10%; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.82rem;
+      color: var(--accent2);
+      font-weight: 500;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+      color: #0f172a;
+    }
+    h1 span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .hero-sub {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      color: var(--muted);
+      max-width: 580px;
+      margin-bottom: 36px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ── SECTIONS GENERAL ── */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      background: rgba(108, 92, 231, 0.06);
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.8px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      color: #0f172a;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto 45px;
+    }
+
+    /* ── SERVICES ── */
+    #services { padding: 80px 5%; text-align: center; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px 24px;
+      text-align: left;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      position: relative;
+      cursor: pointer;
+    }
+    .service-card:hover { transform: translateY(-4px); border-color: rgba(108, 92, 231, 0.2); box-shadow: 0 12px 30px rgba(0,0,0,0.04); }
+    .service-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+      font-size: 1.3rem;
+      background: #f1f5f9;
+    }
+    .service-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; color: #0f172a; }
+    .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    .card-get-started {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── HOW IT WORKS ── */
+    #how { padding: 80px 5%; text-align: center; background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .step { padding: 24px; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; text-align: center; }
+    .step-num { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 8px; }
+    .step h3 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 8px; font-size: 1.05rem; color: #0f172a; }
+    .step p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+    /* ── PRICING ── */
+    #pricing { padding: 80px 5%; text-align: center; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 840px; margin: 0 auto; }
+    .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 36px 28px; text-align: left; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+    .pricing-card.featured { border-color: var(--accent2); box-shadow: 0 10px 30px rgba(108, 92, 231, 0.06); }
+    .badge-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--grad2); color: #fff; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; }
+    .pricing-plan { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+    .pricing-price { font-family: 'Syne', sans-serif; font-size: 2.6rem; font-weight: 800; line-height: 1; margin-bottom: 6px; color: #0f172a; }
+    .pricing-price sub { font-size: 0.85rem; font-weight: 400; color: var(--muted); }
+    .pricing-free-badge { display: inline-block; background: rgba(0,180,216,0.08); color: var(--accent); border: 1px solid rgba(0,180,216,0.15); border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; font-weight: 600; margin-bottom: 12px; }
+    .pricing-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 20px; }
+    .pricing-features { list-style: none; margin-bottom: 26px; display: flex; flex-direction: column; gap: 10px; }
+    .pricing-features li { font-size: 0.9rem; display: flex; align-items: center; gap: 8px; color: var(--text); }
+    .pricing-features li::before { content: '✓'; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,180,216,0.1); color: var(--accent); font-size: 0.65rem; font-weight: 700; flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 40px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: #fff; }
+    .footer-copy { color: var(--muted); font-size: 0.85rem; }
+    .footer-links { display: flex; gap: 20px; align-items: center; }
+    .footer-links a, .footer-links label { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; cursor: pointer; }
+    .footer-links a:hover, .footer-links label:hover { color: var(--accent2); }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── COMPACT PHONE VIEW REFINEMENTS ── */
+    @media (max-width: 640px) {
+      nav { padding: 12px 4%; }
+      .logo-text { font-size: 1.1rem; }
+      .nav-cta { padding: 8px 16px; font-size: 0.8rem; }
+      .hero { padding-top: 120px; padding-bottom: 40px; min-height: auto; }
+      .hero-btns { flex-direction: column; width: 100%; max-width: 280px; }
+      .btn-primary, .btn-outline { width: 100%; text-align: center; padding: 12px 24px; }
+      .modal-box { padding: 32px 20px; }
+      #services, #how, #pricing { padding: 50px 4%; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <input type="checkbox" id="modal-toggle" />
+
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <label for="modal-toggle" class="modal-close" title="Close">✕</label>
+
+      <div class="modal-badge">✨ Let's Work Together</div>
+      <h2>Start Your Project</h2>
+      <p class="modal-sub">Ready to build your dream website? Send a direct message on Instagram to get started instantly with your free trial month.</p>
+
+      <a href="https://www.instagram.com/wildwandererx_200/" target="_blank" class="insta-btn">
+        <span>DM on Instagram 🚀</span>
+      </a>
+    </div>
+  </div>
+
+  <nav>
+    <a href="#" class="logo">
+      <svg class="logo-svg" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00b4d8"/>
+            <stop offset="100%" stop-color="#6c5ce7"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 2L38 11.5V30.5L21 40L4 30.5V11.5L21 2Z" fill="url(#lg1)" opacity="0.1" stroke="url(#lg1)" stroke-width="1.5"/>
+        <path d="M14 15L9 21L14 27" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M28 15L33 21L28 27" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="21" cy="21" r="3" fill="url(#lg1)"/>
+      </svg>
+      <span class="logo-text">CodeNexus</span>
+    </a>
+    <label for="modal-toggle" class="cta-label nav-cta">Get Started</label>
+  </nav>
+
+  <section class="hero">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <div class="hero-badge"> Now accepting new clients — First month FREE</div>
+
+    <h1>We Build <span>Any Website</span><br>You Can Imagine</h1>
+    <p class="hero-sub">Landing pages, stores, portfolios, and responsive interfaces—crafted cleanly with perfect precision for your brand.</p>
+
+    <div class="hero-btns">
+      <label for="modal-toggle" class="cta-label btn-primary">🚀 Start Free This Month</label>
+      <a href="#services" class="cta-label btn-outline">See Services</a>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="reveal">
+      <div class="section-label">What We Build</div>
+      <h2>Every Kind of Website,<br>Built to Perfection</h2>
+      <p class="section-sub">From modern landing pages to clean online stores—delivered with ultra-fast optimization.</p>
+    </div>
+    
+    <div class="services-grid reveal">
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🏪</div>
+        <h3>E-Commerce Stores</h3>
+        <p>Full online shops integrated with seamless mobile-first layouts and fast payment checkouts.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🎨</div>
+        <h3>Portfolio Sites</h3>
+        <p>Stunning spaces designed beautifully to present your unique creative work and expertise.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+      
+      <label for="modal-toggle" class="service-card">
+        <div class="service-icon">🚀</div>
+        <h3>Landing Pages</h3>
+        <p>High-conversion structures engineered cleanly to present products or launch ideas with impact.</p>
+        <span class="card-get-started">Get started →</span>
+      </label>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="reveal">
+      <div class="section-label">The Process</div>
+      <h2>Simple. Transparent. Fast.</h2>
+      <p class="section-sub">From an informal idea to a beautifully deployed functional link.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Share the Idea</h3>
+        <p>Connect with us on Instagram to map out your core feature request requirements seamlessly.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Build & Iterate</h3>
+        <p>We configure customized concepts and layout blueprints dynamically for your review process.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Launch 🚀</h3>
+        <p>We deploy directly onto lightning-fast reliable storage nodes ready for custom traffic flows.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="reveal">
+      <div class="section-label">Pricing</div>
+      <h2>Simple, Honest Pricing</h2>
+      <p class="section-sub">No hidden retainers. First month completely zero cost, followed by flat affordable rates.</p>
+    </div>
+    
+    <div class="pricing-grid reveal">
+      <div class="pricing-card">
+        <div class="pricing-plan">Month 1</div>
+        <div class="pricing-free-badge">🎉 Absolutely FREE</div>
+        <div class="pricing-price">₹0<sub>/mo</sub></div>
+        <p class="pricing-desc">Get your complete website designed, refined, and deployed safely with zero initial upfront investment required.</p>
+        <ul class="pricing-features">
+          <li>Custom layout frameworks</li>
+          <li>Mobile responsive scaling</li>
+          <li>Clean code structural logic</li>
+          <li>Contact endpoint alignment</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card outline">Claim Free Setup</label>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="badge-popular">⚡ Standard</div>
+        <div class="pricing-plan">From Month 2</div>
+        <div class="pricing-price">₹2,999<sub>/mo</sub></div>
+        <p class="pricing-desc">Continuous hosting coordination, text content additions, and routine feature enhancements as operations scale forward.</p>
+        <ul class="pricing-features">
+          <li>Everything in Free Month</li>
+          <li>Priority iteration windows</li>
+          <li>Performance speed monitoring</li>
+          <li>Domain mapping configuration</li>
+        </ul>
+        <label for="modal-toggle" class="cta-label btn-card grad">Get Started Today</label>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">
+      <span class="logo-text" style="font-size:1rem;">CodeNexus</span>
+    </div>
+    <p class="footer-copy">© 2026 CodeNexus. Designed by <a href="https://www.instagram.com/wildwandererx_200/" target="_blank" style="color: var(--accent2); font-weight: 600; text-decoration: none;">@wildwandererx_200</a>.</p>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://www.instagram.com/wildwandererx_200/" target="_blank">Instagram</a>
+    </div>
+  </footer>
+
+  <script>
+    /* ── SCROLL REVEAL LOGIC ── */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.05 });
+
+    reveals.forEach(r => observer.observe(r));
+
+    /* ── DISMISS MODAL VIA ESC KEY OR BACKDROP CLICK ── */
+    document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        document.getElementById('modal-toggle').checked = false;
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.getElementById('modal-toggle').checked = false;
+      }
+    });
+  </script>
+</body>
+</html>
